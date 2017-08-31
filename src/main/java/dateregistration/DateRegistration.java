@@ -1,10 +1,9 @@
 package dateregistration;
 
 
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 /**
@@ -13,15 +12,16 @@ import java.time.LocalDate;
 
 //
 public class DateRegistration {
- //   @DateTimeFormat(pattern="yyyy-MM-dd")
+
     @JsonSerialize(using=CustomDateTimeSerializer.class)
+ //   @JsonProperty(required = true)
+    @NotNull
     private LocalDate checkinDate;
 
     @JsonSerialize(using=CustomDateTimeSerializer.class)
- //   @DateTimeFormat(pattern="yyyy-MM-dd")
+//    @JsonProperty(required = true)
+    @NotNull
     private LocalDate checkoutDate;
-
-
     public DateRegistration(){}
 
     public DateRegistration(LocalDate checkinDate, LocalDate checkoutDate){
@@ -45,27 +45,5 @@ public class DateRegistration {
         return checkoutDate;
     }
 
-////getters and setters
-//    public LocalDate getDate(){
-//        return date;
-//    }
-//    public void setDate(int date){
-//        this.date=date;
-//    }
-//
-//    public int getMonth(){
-//        return month;
-//    }
-//
-//    public void setMonth(int month){
-//        this.month=month;
-//    }
-//
-//    public int getYear(){
-//        return year;
-//    }
-//
-//    public void setYear(int year){
-//        this.year=year;
-//    }
+
 }

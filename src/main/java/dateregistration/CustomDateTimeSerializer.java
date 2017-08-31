@@ -22,4 +22,5 @@ public class CustomDateTimeSerializer extends JsonSerializer<LocalDate> {
         jsonGenerator.writeString(FORMATTER.format(localDate));
     }
 
+
 }
