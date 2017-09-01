@@ -35,13 +35,13 @@ public class DateRegistrationEndpoint {
     }
 
     //set dates
-    @RequestMapping(method = RequestMethod.POST, value = {"/dateregistration"})
-    public ResponseEntity<Void> postCheckinDate(@RequestBody @Valid DateRegistration dateRegistration) throws InvalidDateException {
+    @RequestMapping(method = RequestMethod.POST, value = {"/user/{userID}/dateregistration"})
+    public ResponseEntity<Void> postCheckinDate(@RequestBody @Valid DateRegistration dateRegistration, @PathVariable("userID") int userID) throws InvalidDateException {
         if (dateRegistration.getCheckinDate().isBefore(dateRegistration.getCheckoutDate())) {
             System.out.println("=========Checkin and Checkout date==========");
             System.out.println("Checkin Date: " + dateRegistration.getCheckinDate());
             System.out.println("Checkout Date: " + dateRegistration.getCheckoutDate());
-            database.insertData(dateRegistration);
+            database.insertData(dateRegistration,userID);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
           //throw new InvalidDateException();
@@ -50,15 +50,19 @@ public class DateRegistrationEndpoint {
     }
 
 
-    //get booking overview
+    //get booking overview from
     @RequestMapping(method = RequestMethod.GET, value = {"/dateregistration"})
     public ResponseEntity<List<DateRegistration>> listAllBooking() {
-        database.showBookingDates();
         System.out.println("Booking Overview " + database.showBookingDates());
         return new ResponseEntity<>(database.showBookingDates(), HttpStatus.OK);
     }
 
-
+    //get booking overview from one user
+    @RequestMapping(method = RequestMethod.GET, value = {"user/{userID}/dateregistration"})
+    public ResponseEntity<List<DateRegistration>> listAllBooking(@PathVariable ("userID") int userID) {
+        System.out.println("Booking Overview " + database.showBookingDates(userID));
+        return new ResponseEntity<>(database.showBookingDates(userID), HttpStatus.OK);
+    }
 
     //delete all booking
     @RequestMapping(method = RequestMethod.DELETE, value = {"/dateregistration"})

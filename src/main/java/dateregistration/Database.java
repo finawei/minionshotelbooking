@@ -1,5 +1,6 @@
 package dateregistration;
 
+import login.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,12 +24,17 @@ public class Database {
     public Map<Long, DateRegistration> database = new HashMap<>();
     public AtomicLong idGenerator = new AtomicLong(0);
 
-    public void insertData(DateRegistration dateRegistration) {
-        String sqlInsert = "insert into booking(booking_checkinDate, booking_checkoutDate) values (?,?);";
+    public void insertData(DateRegistration dateRegistration, int userID) {
+        String sqlInsert = "insert into booking(booking_checkinDate, booking_checkoutDate, booking_foreignid) values (?,?,?);";
         Date checkinDate = Date.from(dateRegistration.getCheckinDate().atStartOfDay(ZoneId.of("UTC")).toInstant());
         Date checkoutDate = Date.from(dateRegistration.getCheckoutDate().atStartOfDay(ZoneId.of("UTC")).toInstant());
-        jdbcTemplate.update(sqlInsert, new Object[]{checkinDate, checkoutDate});
+        jdbcTemplate.update(sqlInsert, new Object[]{checkinDate, checkoutDate,userID});
         //database.put(idGenerator.getAndIncrement(), dateRegistration);
+    }
+
+    public void insertData(User user){
+        String sqlInsert="insert into user (user_name, user_password) values (?,?);";
+        jdbcTemplate.update(sqlInsert, new Object[]{user.getUsername(),user.getPassword()});
     }
 
 
@@ -39,8 +45,17 @@ public class Database {
 
 
     public List<DateRegistration> showBookingDates() {
-        String sqlQuery = "select booking_checkinDate,booking_checkoutDate from booking";
+        String sqlQuery = "select booking_checkinDate,booking_checkoutDate from booking;";
         return jdbcTemplate.query(sqlQuery, new BookingRowMapper());
+    }
+
+    public List<DateRegistration> showBookingDates(int userID){
+        String sqlQuery = "select booking_checkinDate, booking_checkoutDate from booking where booking_foreignid =?;";
+        return jdbcTemplate.query(sqlQuery,new Object[]{userID}, new BookingRowMapper());
+    }
+    public User getUserInfo (int userID){
+        String sqlQuery="SELECT user_id,user_name,user_password from user where user_id=?;";
+        return jdbcTemplate.queryForObject(sqlQuery,new Object[]{userID}, new UserRowMapper());
     }
 
     public void deleteOneBooking(long id) throws InvalidBookingIDException {
@@ -62,6 +77,18 @@ public class Database {
             booking.setCheckinDate((resultSet.getDate("booking_checkinDate").toLocalDate()));
             booking.setCheckoutDate((resultSet.getDate("booking_checkoutDate").toLocalDate()));
             return booking;
+        }
+    }
+
+    //get user info
+    class UserRowMapper implements RowMapper<User>{
+        @Override
+        public User mapRow(ResultSet resultSet, int i) throws SQLException{
+            User user= new User();
+            user.setUsername(resultSet.getString("user_name"));
+            user.setPassword(resultSet.getString("user_password"));
+            user.setUserId(resultSet.getInt("user_id"));
+            return user;
         }
     }
 }
