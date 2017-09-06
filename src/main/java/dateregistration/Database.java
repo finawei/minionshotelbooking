@@ -32,7 +32,7 @@ public class Database {
         //database.put(idGenerator.getAndIncrement(), dateRegistration);
     }
 
-    public void insertData(User user){
+    public void insertUser(User user){
         String sqlInsert="insert into user (user_name, user_password) values (?,?);";
         jdbcTemplate.update(sqlInsert, new Object[]{user.getUsername(),user.getPassword()});
     }
@@ -41,6 +41,12 @@ public class Database {
     public void deleteData() {
         String sqlDelete = "delete from booking where booking_id >=1; ";
         jdbcTemplate.update(sqlDelete);
+    }
+
+    public void deleteUser(int userID){
+        String sqlDelete = "delete from booking where booking_foreignid=?";
+        jdbcTemplate.update(sqlDelete,new Object[]{userID});
+
     }
 
 
@@ -56,6 +62,11 @@ public class Database {
     public User getUserInfo (int userID){
         String sqlQuery="SELECT user_id,user_name,user_password from user where user_id=?;";
         return jdbcTemplate.queryForObject(sqlQuery,new Object[]{userID}, new UserRowMapper());
+    }
+
+    public User loadUserByUsername(String username){
+        String sqlQuery="Select user_id, user_name, user_password from user where user_name=?;";
+        return jdbcTemplate.queryForObject(sqlQuery, new Object[]{username},new UserRowMapper());
     }
 
     public void deleteOneBooking(long id) throws InvalidBookingIDException {
