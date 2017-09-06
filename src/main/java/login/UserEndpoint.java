@@ -40,34 +40,30 @@ public UserEndpoint(UserService userService){
 public UserEndpoint(){}
 //create users
     @RequestMapping(method= RequestMethod.POST, value={"/user"})
-    //what is principal
      public ResponseEntity<Void> register(@RequestBody User user){
-   // User currentUser= database.loadUserByUsername(principal.getName());
-        userService.addUser(user);//call userservice
+        userService.addUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 //retrieve user info
     @RequestMapping(method=RequestMethod.GET,value={"/user/{userID}"})
     public ResponseEntity<User> getUserBooking(@PathVariable ("userID") int userId, Principal principal) throws InvalidUserIdException{
-     //   principal.getName();//current user
-        if(principal.getName()==userService.loadUserByUserId(userId).getUsername()) {
+        //current user
+        if(principal.getName().equals(userService.loadUserByUserId(userId).getUsername())) {
             return new ResponseEntity<>(userService.loadUserByUserId(userId), HttpStatus.OK);
         }else
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-//    @RequestMapping(method=RequestMethod.DELETE,value={"/user/userID"})
-//    public ResponseEntity<Void> deleteUser(@PathVariable ("userID")int userId, Principal principal ){
-//     //   User currentUser=database.loadUserByUsername(principal.getName()) ;
-//        if (principal.getName()==userService.loadUserByUserId(userId).getUsername()){
-//            .deleteUser(userId);
-//            return new ResponseEntity<>(HttpStatus.OK);
-//        }else
-//            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//    }
+    @RequestMapping(method=RequestMethod.DELETE,value={"/user/userID"})
+    public ResponseEntity<Void> deleteUser(@PathVariable ("userID")int userId, Principal principal ){
+        if(principal.getName().equals(userService.loadUserByUserId(userId).getUsername())) {
+            userService.deleteUser(userId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else
+            return new ResponseEntity<Void>(HttpStatus.UNAUTHORIZED);
+    }
 
-// auth
-   // @RequestMapping(method=RequestMethod.PO)
+
 
 }
