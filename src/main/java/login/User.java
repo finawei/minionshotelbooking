@@ -1,6 +1,7 @@
 package login;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ public class User implements UserDetails {
     private String username,password;
     private int id;
     private boolean enabled;
+    private  String role;
     public User(){}
     public User(String username, String password){
         this.username=username;
@@ -24,9 +26,20 @@ public class User implements UserDetails {
         this.username=username;
         this.password=password;
     }
+
+    public User(int id, String username, String password, String role){
+        this.id=id;
+        this.username=username;
+        this.password=password;
+        this.role=role;
+    }
+
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority(role));
         return authorities;
     }
 
@@ -65,5 +78,11 @@ public class User implements UserDetails {
     }
     public int getUserId(){
         return id;
+    }
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role){
+        this.role=role;
     }
 }

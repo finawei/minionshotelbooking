@@ -14,20 +14,29 @@ import java.time.LocalDate;
 public class DateRegistration {
 
     @JsonSerialize(using=CustomDateTimeSerializer.class)
- //   @JsonProperty(required = true)
     @NotNull
     private LocalDate checkinDate;
 
     @JsonSerialize(using=CustomDateTimeSerializer.class)
-//    @JsonProperty(required = true)
     @NotNull
     private LocalDate checkoutDate;
-    public DateRegistration(){}
+    private int bookingID;
+    private String username;
 
-    public DateRegistration(LocalDate checkinDate, LocalDate checkoutDate){
+    public DateRegistration(){}
+    public DateRegistration(LocalDate checkinDate, LocalDate checkoutDate, int bookingID){
         this.checkinDate=checkinDate;
         this.checkoutDate=checkoutDate;
+        this.bookingID = bookingID;
     }
+
+    public DateRegistration (LocalDate checkinDate, LocalDate checkoutDate, int bookingID, String username){
+        this.checkinDate=checkinDate;
+        this.checkoutDate=checkoutDate;
+        this.bookingID = bookingID;
+        this.username= username;
+    }
+
 
     public void setCheckinDate(LocalDate checkinDate){
         this.checkinDate=checkinDate;
@@ -45,5 +54,24 @@ public class DateRegistration {
         return checkoutDate;
     }
 
+    public void setBookingID(int bookingID) {
+        this.bookingID = bookingID;
+    }
 
+    public int getBookingID () {
+        return bookingID;
+    }
+
+    public void setUsername (String username){
+        this.username=username;
+    }
+    public String getUsername(){
+        return username;
+    }
+
+    @Override
+    public String toString() {
+        String booking = this.getUsername()+ " "+ this.getCheckinDate()+" - "+ this.getCheckoutDate();
+        return  booking;
+    }
 }
